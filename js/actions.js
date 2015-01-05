@@ -11,7 +11,8 @@
         "addItem",        // called by hitting enter in field in TodoHeader
         "removeItem",     // called by button in TodoItem
         "clearCompleted", // called by button in TodoFooter
-        "editItem"        // called by finishing edit in TodoItem
+        "editItem",        // called by finishing edit in TodoItem
+        "mergeLists"
     ]);
 
 })(window.Reflux, window);

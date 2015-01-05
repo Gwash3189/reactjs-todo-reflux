@@ -1,11 +1,11 @@
-(function(Reflux, TodoActions, global) {
+(function(Reflux, TodoActions, global, undoActions) {
     'use strict';
 
     // some variables and helpers for our fake database stuff
     var todoCounter = 0,
         localStorageKey = "todos";
 
-    function getItemByKey(list,itemKey){
+    function getItemByKey(list, itemKey) {
         return _.find(list, function(item) {
             return item.key === itemKey;
         });
@@ -14,8 +14,11 @@
     global.todoListStore = Reflux.createStore({
         // this will set up listeners to all publishers in TodoActions, using onKeyname (or keyname) as callbacks
         listenables: [TodoActions],
+        updateItemsToRestore: function(items) {
+            undoActions.updateItemsToRestore(items);
+        },
         onEditItem: function(itemKey, newLabel) {
-            var foundItem = getItemByKey(this.list,itemKey);
+            var foundItem = getItemByKey(this.list, itemKey);
             if (!foundItem) {
                 return;
             }
@@ -31,12 +34,13 @@
             }].concat(this.list));
         },
         onRemoveItem: function(itemKey) {
-            this.updateList(_.filter(this.list,function(item){
-                return item.key!==itemKey;
+            this.updateItemsToRestore([getItemByKey(this.list, itemKey)]);
+            this.updateList(_.filter(this.list, function(item) {
+                return item.key !== itemKey;
             }));
         },
         onToggleItem: function(itemKey) {
-            var foundItem = getItemByKey(this.list,itemKey);
+            var foundItem = getItemByKey(this.list, itemKey);
             if (foundItem) {
                 foundItem.isComplete = !foundItem.isComplete;
                 this.updateList(this.list);
@@ -48,13 +52,22 @@
                 return item;
             }));
         },
+        mergeLists: function(newList) {
+            this.list = _.sortBy(this.list.concat(newList), "key");
+            this.updateList(this.list);
+        },
         onClearCompleted: function() {
+            var items = [];
             this.updateList(_.filter(this.list, function(item) {
+                if (item.isComplete) {
+                    items.push(item);
+                }
                 return !item.isComplete;
             }));
+            this.updateItemsToRestore(items);
         },
         // called whenever we change a list. normally this would mean a database API call
-        updateList: function(list){
+        updateList: function(list) {
             localStorage.setItem(localStorageKey, JSON.stringify(list));
             // if we used a real database, we would likely do the below in a callback
             this.list = list;
@@ -82,4 +95,4 @@
         }
     });
 
-})(window.Reflux, window.TodoActions, window);
+})(window.Reflux, window.TodoActions, window, window.undoActions);
