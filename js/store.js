@@ -53,7 +53,7 @@
             }));
         },
         mergeLists: function(newList) {
-            this.list = _.sortBy(this.list.concat(newList), "key").reverse();
+            this.list = this.list.concat(newList);
             this.updateList(this.list);
         },
         onClearCompleted: function() {
