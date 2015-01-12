@@ -1,6 +1,6 @@
 /* base.css overrides */
 
-#addmany {
+#addmanycontainer {
     text-align: center;
     margin-top: 50px;
 }
@@ -23,4 +23,30 @@
     background: silver;
     padding: 4px 6px;
     color: rgb(203, 36, 36);
+}
+
+#addmany > a:visited {
+    color: rgb(61, 181, 144);
+}
+
+
+.addManyTextArea {
+	display: block;
+	margin-left: 17%;
+}
+
+.normal-button{
+	align-items: flex-start;
+	text-align: center;
+	cursor: default;
+	color: buttontext;
+	padding: 2px 6px 3px;
+	border: 2px outset buttonface;
+	border-image-source: initial;
+	border-image-slice: initial;
+	border-image-width: initial;
+	border-image-outset: initial;
+	border-image-repeat: initial;
+	background-color: buttonface;
+	box-sizing: border-box;
 }
